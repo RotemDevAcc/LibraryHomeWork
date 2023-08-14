@@ -186,6 +186,7 @@
         }
 
         function FlipBooks(){
+            if (!CanInteract()) return
             Books.reverse()
             DisplayBook()
         }
