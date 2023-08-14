@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JB Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(43, 43, 43)
+        }
+
+        #display{
+            color: rgb(54, 170, 126);
+        }
+    </style>
+</head>
+
+<body>
+    <button class="btn btn-primary" onclick="NextBook()">Next Book</button>
+    <button class="btn btn-primary" onclick="PreviousBook()">Previous Book</button>
+    <button class="btn btn-danger" onclick="RemoveBook()">Remove Book</button>
+    <button class="btn btn-danger" onclick="ResetBooks()">Default Books</button>
+
+    <br>
+    <hr>
+    <center>
+        <div id="displaypicture"></div>
+        <br>
+        <div id="display">Waiting</div>
+    </center>
+
+    <br><br>
+    <h1 style = "color: rgb(54, 170, 126);">Add A Book</h1>
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Book Name</span>
+        <input id="inbname" type="text" class="form-control" placeholder="..." aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Author</span>
+        <input id="inaname" type="text" class="form-control" placeholder="Author Name" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Category</span>
+        <input id="incategory" type="text" class="form-control" placeholder="Category Name" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">IMG</span>
+        <input id="inpicture" type="text" class="form-control" placeholder="URL" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+
+    <button class="btn btn-info" onclick="AddBook()">Add Book</button>
+
+    <script>
+        let Books = []
+        const DefaultBooks = [
+            {
+                "bname": "1984",
+                "author": "George Orwell",
+                "category": "Dystopian Fiction",
+                "img": "images/1984.jpeg"
+            },
+            {
+                "bname": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "category": "Classic Literature",
+                "img": "images/Tokillmocking.jpeg"
+            },
+            {
+                "bname": "The Great Gatsby",
+                "author": "F. Scott Fitzgerald",
+                "category": "Classic Literature",
+                "img": "images/gatsby.jpeg"
+            },
+            {
+                "bname": "A Brief History of Time",
+                "author": "Stephen Hawking",
+                "category": "Popular Science",
+                "img": "images/brief.jpeg"
+            },
+            {
+                "bname": "Harry Potter and the Sorcerer's Stone",
+                "author": "J.K. Rowling",
+                "category": "Fantasy",
+                "img": "images/harry.jpeg"
+            },
+        ]
+
+        
+        let bIndex = 0
+        ApplyIndex()
+        function ApplyIndex(){
+            let remember = localStorage.getItem("CurrentBook")
+
+            if(remember){
+                bIndex = remember
+            }else{
+                bIndex = 0
+            }
+
+            console.log(bIndex)
+        }
+
+        function updateIndex(){
+            localStorage.setItem("CurrentBook",bIndex)
+        }
+        
+
+        function DisplayBook(NoBooks) {
+
+            if(NoBooks){
+                display.innerHTML = "No Books To Show"
+                displaypicture.innerHTML = ""
+                return
+            }
+
+            let Text = `${Books[bIndex].bname}<br>Written By: ${Books[bIndex].author}<br>Category: ${Books[bIndex].category}`
+            display.innerHTML = Text
+            displaypicture.innerHTML = `<img src=${Books[bIndex].img} height="120px" width="120px" class="img-thumbnail" alt="...">`
+        }
+
+        function NextBook() {
+            if (!CanInteract()) return
+
+            bIndex >= Books.length - 1 ? bIndex = Books.length - 1 : bIndex++
+            updateIndex()
+            DisplayBook()
+        }
+
+        function PreviousBook() {
+            if (!CanInteract()) return
+            bIndex <= 0 ? bIndex = 0 : bIndex--
+            updateIndex()
+            DisplayBook()
+        }
+
+        function AddBook() {
+            //if (!CanInteract()) return
+            let BookName = document.getElementById("inbname").value
+            let AuthorName = document.getElementById("inaname").value
+            let Category = document.getElementById("incategory").value
+            let Picture = document.getElementById("inpicture").value
+
+
+
+            if (!BookName || !AuthorName || !Category || !Picture) {
+                alert("You Have To Include All 4 Parameters\nBook Name, Author, Category And A Picture.")
+                return
+            }
+
+            Books.push({
+                "bname": BookName,
+                "author": AuthorName,
+                "category": Category,
+                "img": Picture
+
+            })
+
+            localStorage.setItem("BookList", JSON.stringify(Books))
+            bIndex = Books.length - 1
+            updateIndex()
+            alert("Book Created And Save To Local Storage")
+
+            DisplayBook()
+        }
+
+        function ResetBooks(){
+            Books = JSON.parse(localStorage.getItem("DefaultList"))
+            localStorage.setItem("BookList", JSON.stringify(Books))
+            bIndex = 0
+            updateIndex();
+            DisplayBook();
+        }
+
+        function RemoveBook() {
+            if (!CanInteract()) return
+            
+            let lastbook = Books.length - 1
+
+            if(bIndex >= lastbook)
+            {
+                bIndex = lastbook - 1;
+                updateIndex();
+            }
+            
+
+            Books.splice(lastbook)
+
+            if(!Books.length)
+                DisplayBook(true)
+            else
+            DisplayBook()
+        }
+
+        function CanInteract() {
+            return Books.length ? true : false
+        }
+
+
+        function init() {
+            let storedBooks = localStorage.getItem("BookList")
+            if (storedBooks) {
+                Books = JSON.parse(storedBooks) // Parse the stored JSON string back to a JavaScript array
+            } else {
+                Books = DefaultBooks
+                localStorage.setItem("DefaultList", JSON.stringify(DefaultBooks))
+            }
+
+            if(!Books.length)
+                DisplayBook(true)
+            else
+            DisplayBook()
+        }
+        init()
+
+    </script>
+</body>
+
+</html>
