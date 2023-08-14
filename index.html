@@ -23,6 +23,7 @@
     <button class="btn btn-primary" onclick="PreviousBook()">Previous Book</button>
     <button class="btn btn-danger" onclick="RemoveBook()">Remove Book</button>
     <button class="btn btn-danger" onclick="ResetBooks()">Default Books</button>
+    <button class="btn btn-danger" onclick="FlipBooks()">Flip Books</button>
 
     <br>
     <hr>
@@ -122,8 +123,9 @@
                 displaypicture.innerHTML = ""
                 return
             }
+            
 
-            let Text = `${Books[bIndex].bname}<br>Written By: ${Books[bIndex].author}<br>Category: ${Books[bIndex].category}`
+            let Text = `${Books[bIndex].bname}<br>Written By: ${Books[bIndex].author}<br>Category: ${Books[bIndex].category}<br>Viewing Book: ${(bIndex + 1)} / ${Books.length}`
             display.innerHTML = Text
             displaypicture.innerHTML = `<img src=${Books[bIndex].img} height="120px" width="120px" class="img-thumbnail" alt="...">`
         }
@@ -179,6 +181,11 @@
             bIndex = 0
             updateIndex();
             DisplayBook();
+        }
+
+        function FlipBooks(){
+            Books.reverse()
+            DisplayBook()
         }
 
         function RemoveBook() {
