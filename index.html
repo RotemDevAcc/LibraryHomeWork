@@ -103,7 +103,7 @@
             let remember = localStorage.getItem("CurrentBook")
 
             if(remember){
-                bIndex = remember
+                bIndex = Number(remember)
             }else{
                 bIndex = 0
             }
@@ -125,7 +125,9 @@
             }
             
 
-            let Text = `${Books[bIndex].bname}<br>Written By: ${Books[bIndex].author}<br>Category: ${Books[bIndex].category}<br>Viewing Book: ${(bIndex + 1)} / ${Books.length}`
+            let viewnum = bIndex + 1
+
+            let Text = `${Books[bIndex].bname}<br>Written By: ${Books[bIndex].author}<br>Category: ${Books[bIndex].category}<br>Viewing Book: ${viewnum} / ${Books.length}`
             display.innerHTML = Text
             displaypicture.innerHTML = `<img src=${Books[bIndex].img} height="120px" width="120px" class="img-thumbnail" alt="...">`
         }
